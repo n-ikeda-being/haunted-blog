@@ -15,6 +15,11 @@ class Blog < ApplicationRecord
 
   scope :default_order, -> { order(id: :desc) }
 
+  scope :can_access, lambda { |user|
+    where(user: user)
+      .or(published)
+  }
+
   def owned_by?(target_user)
     user == target_user
   end

@@ -10,15 +10,14 @@ class BlogsController < ApplicationController
   end
 
   def show
-    raise ActiveRecord::RecordNotFound if @blog.secret && !@blog.owned_by?(current_user)
+    @blog = Blog.can_access(current_user).find(params[:id])
   end
 
   def new
     @blog = Blog.new
   end
 
-  def edit
-    raise ActiveRecord::RecordNotFound unless current_user == @blog.user
+  def edit;
   end
 
   def create
@@ -32,8 +31,6 @@ class BlogsController < ApplicationController
   end
 
   def update
-    raise ActiveRecord::RecordNotFound unless current_user == @blog.user
-
     if @blog.update(blog_params)
       redirect_to blog_url(@blog), notice: 'Blog was successfully updated.'
     else
@@ -42,8 +39,6 @@ class BlogsController < ApplicationController
   end
 
   def destroy
-    raise ActiveRecord::RecordNotFound unless current_user == @blog.user
-
     @blog.destroy!
     redirect_to blogs_url, notice: 'Blog was successfully destroyed.', status: :see_other
   end
